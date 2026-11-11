@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useData } from '../../store/data.js'
-import { BookIcon, ListIcon, PlusIcon } from '../Icons.jsx'
+import { BookIcon, CalendarIcon, ListIcon, PlusIcon } from '../Icons.jsx'
 
 export default function NewMenu() {
   const [open, setOpen] = useState(false)
@@ -31,6 +31,11 @@ export default function NewMenu() {
     navigate('/todo', { state: { focusNew: Date.now() } })
   }
 
+  function newEvent() {
+    setOpen(false)
+    navigate('/calendar', { state: { newEvent: Date.now() } })
+  }
+
   return (
     <div className="new-menu" ref={ref}>
       <button className="new-btn" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen(!open)}>
@@ -46,6 +51,10 @@ export default function NewMenu() {
           <button role="menuitem" onClick={newTask}>
             <ListIcon size={16} />
             <span>Task</span>
+          </button>
+          <button role="menuitem" onClick={newEvent}>
+            <CalendarIcon size={16} />
+            <span>Event</span>
           </button>
         </div>
       )}

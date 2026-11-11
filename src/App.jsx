@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import MobileBar from './components/layout/MobileBar.jsx'
 import Sidebar from './components/layout/Sidebar.jsx'
+import Calendar from './pages/Calendar.jsx'
 import Journal from './pages/Journal.jsx'
 import Todo from './pages/Todo.jsx'
 
@@ -23,6 +24,7 @@ export default function App() {
             <Route path="/" element={<Navigate to="/journal" replace />} />
             <Route path="/journal/:id?" element={<Journal />} />
             <Route path="/todo" element={<Todo />} />
+            <Route path="/calendar" element={<Calendar />} />
             <Route path="*" element={<Navigate to="/journal" replace />} />
           </Routes>
         </div>

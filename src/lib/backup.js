@@ -1,10 +1,11 @@
 import { dayKey } from './dates.js'
+import { cleanEvent, validEvent } from './events.js'
 
 const APP = 'daybook'
 const VERSION = 1
 
-export function buildBackup(entries, todos) {
-  return { app: APP, version: VERSION, exportedAt: new Date().toISOString(), entries, todos }
+export function buildBackup(entries, todos, events = []) {
+  return { app: APP, version: VERSION, exportedAt: new Date().toISOString(), entries, todos, events }
 }
 
 export function downloadJson(data, filename) {
@@ -56,15 +57,18 @@ export function parseBackup(text) {
   } catch {
     throw new Error("That file isn't valid JSON.")
   }
-  if (!isObj(data) || (!Array.isArray(data.entries) && !Array.isArray(data.todos))) {
+  if (!isObj(data) || (!Array.isArray(data.entries) && !Array.isArray(data.todos) && !Array.isArray(data.events))) {
     throw new Error("That file doesn't look like a Daybook backup.")
   }
   const rawEntries = Array.isArray(data.entries) ? data.entries : []
   const rawTodos = Array.isArray(data.todos) ? data.todos : []
+  const rawEvents = Array.isArray(data.events) ? data.events : []
   const entries = rawEntries.filter(validEntry).map(cleanEntry)
   const todos = rawTodos.filter(validTodo).map(cleanTodo)
-  const skipped = rawEntries.length - entries.length + (rawTodos.length - todos.length)
-  return { entries, todos, skipped }
+  const events = rawEvents.filter(validEvent).map(cleanEvent)
+  const skipped =
+    rawEntries.length - entries.length + (rawTodos.length - todos.length) + (rawEvents.length - events.length)
+  return { entries, todos, events, skipped }
 }
 
 const stamp = (item) => item.updatedAt ?? item.completedAt ?? item.createdAt ?? 0

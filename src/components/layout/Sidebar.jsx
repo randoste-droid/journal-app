@@ -1,15 +1,16 @@
 import { useMemo } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { normalizeEntry, isBlankEntry } from '../../lib/entries.js'
+import { dayKey } from '../../lib/dates.js'
 import { bucketOf, normalizeTodo } from '../../lib/todos.js'
 import { useData } from '../../store/data.js'
-import { BookIcon, ListIcon, TagIcon, XIcon } from '../Icons.jsx'
+import { BookIcon, CalendarIcon, ListIcon, TagIcon, XIcon } from '../Icons.jsx'
 import NewMenu from './NewMenu.jsx'
 import BackupControls from './BackupControls.jsx'
 import ThemeToggle from './ThemeToggle.jsx'
 
 export default function Sidebar({ open, onClose }) {
-  const { entries, todos } = useData()
+  const { entries, todos, events } = useData()
   const location = useLocation()
   const activeTag = new URLSearchParams(location.search).get('tag')
 
@@ -24,6 +25,11 @@ export default function Sidebar({ open, onClose }) {
     const active = todos.map(normalizeTodo).filter((t) => !t.done)
     return { openCount: active.length, overdue: active.filter((t) => bucketOf(t) === 'overdue').length }
   }, [todos])
+
+  const todayEvents = useMemo(() => {
+    const today = dayKey(Date.now())
+    return events.filter((e) => e.date === today).length
+  }, [events])
 
   return (
     <>
@@ -52,6 +58,11 @@ export default function Sidebar({ open, onClose }) {
             ) : (
               <span className="sb-count">{openCount || ''}</span>
             )}
+          </NavLink>
+          <NavLink to="/calendar" className={({ isActive }) => `sb-link${isActive ? ' active' : ''}`}>
+            <CalendarIcon size={17} />
+            <span>Calendar</span>
+            <span className="sb-count" title={todayEvents ? `${todayEvents} today` : undefined}>{todayEvents || ''}</span>
           </NavLink>
         </nav>
 

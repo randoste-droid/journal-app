@@ -3,11 +3,12 @@ import useLocalStorage from '../hooks/useLocalStorage.js'
 import { blankEntry } from '../lib/entries.js'
 import { DataContext } from './data.js'
 
-// Single source of truth for journal entries and todos, so the sidebar,
+// Single source of truth for journal entries, todos and calendar events, so the sidebar,
 // pages and counts always stay in sync.
 export function DataProvider({ children }) {
   const [entries, setEntries] = useLocalStorage('journal-entries', [])
   const [todos, setTodos] = useLocalStorage('todos', [])
+  const [events, setEvents] = useLocalStorage('events', [])
 
   // One-time migration: the old composer kept an unsaved draft separately.
   useEffect(() => {
@@ -34,8 +35,8 @@ export function DataProvider({ children }) {
   )
 
   const value = useMemo(
-    () => ({ entries, setEntries, todos, setTodos, createEntry }),
-    [entries, setEntries, todos, setTodos, createEntry],
+    () => ({ entries, setEntries, todos, setTodos, events, setEvents, createEntry }),
+    [entries, setEntries, todos, setTodos, events, setEvents, createEntry],
   )
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>
 }
